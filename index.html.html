@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistema de Registro Académico y Admisiones, Tulua</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #fff; font-family: Arial, Helvetica, sans-serif; color: #000; }
+  .vista { display: none; }
+  .vista.activa { display: block; }
+
+  /* ================= LOGIN ================= */
+  #login-box { position: absolute; left: 100px; top: 12px; width: 413px; height: 254px; border: 2px solid #c9363e; outline: 1px solid #9a9a9a; background: #fff; }
+  #login-header { position: absolute; left: 0; top: 0; right: 0; height: 35px; background: #f7ead3; border-bottom: 2px solid #c9363e; }
+  #login-header h1 { margin: 0; font-size: 17px; text-align: center; line-height: 34px; }
+  #icon-key { position: absolute; left: 50px; top: 1px; font-size: 28px; line-height: 1; }
+  #icon-home { position: absolute; left: 346px; top: 3px; width: 16px; height: 16px; }
+  #icon-close { position: absolute; left: 396px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #222; color: #fff; font-size: 10px; line-height: 12px; text-align: center; font-weight: bold; border: 1px solid #777; }
+  #logo { position: absolute; left: 15px; top: 58px; width: 42px; }
+  #aviso { position: absolute; left: 74px; top: 59px; width: 316px; height: 50px; background: #ffffcc; border: 1px solid #555; outline: 1px solid #fff; outline-offset: -3px; padding: 2px 3px; font-size: 11px; line-height: 12px; overflow: hidden; }
+  .lbl { position: absolute; font-size: 11px; font-weight: bold; text-align: right; width: 100px; left: 105px; }
+  #lbl-login { top: 123px; } #lbl-pass { top: 141px; }
+  .campo { position: absolute; left: 207px; width: 115px; height: 15px; border: 1px solid #555; padding: 0 2px; font-size: 12px; background: #fff; border-radius: 2px; }
+  #login { top: 120px; border: 2px solid #000; width: 114px; height: 14px; }
+  #password { top: 138px; }
+  .btn { position: absolute; top: 169px; height: 19px; background: #fde9e9; border: 1px solid #c9363e; color: #0b1f8a; font-size: 11px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; padding: 0 6px; cursor: pointer; }
+  .btn:hover { background: #f9d3d3; }
+  #btn-ingresar { left: 117px; } #btn-limpiar { left: 241px; }
+  #guia { position: absolute; left: 18px; top: 204px; width: 48px; text-align: center; font-size: 11px; font-weight: bold; color: #000; text-decoration: none; }
+  #guia svg { display: block; margin: 0 auto 3px; }
+  .enlace { position: absolute; top: 212px; font-size: 11px; color: #a3171d; text-decoration: none; }
+  .enlace:hover { text-decoration: underline; }
+  #cambiar { left: 122px; } #olvide { left: 246px; }
+  #mensaje { position: absolute; left: 105px; top: 232px; width: 290px; text-align: center; font-size: 11px; color: #a3171d; }
+
+  /* ================= PANEL DE CONTROL ================= */
+  #app { position: relative; width: 765px; height: var(--h, 485px); background: #fff; overflow: hidden; }
+  #cabecera { position: absolute; left: 0; top: 0; width: 765px; height: 76px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0 4px, rgba(0,0,0,.10) 4px 9px) right / 360px 100% no-repeat,
+      linear-gradient(90deg, #f0eef0 0%, #f2e2e2 45%, #b3222a 68%, #8d1018 85%, #b01b22 100%); }
+  #cabecera .logo { position: absolute; left: 15px; top: 8px; width: 40px; }
+  #titulo-sistema { position: absolute; left: 74px; top: 28px; margin: 0; font-size: 17px; font-weight: bold; padding-bottom: 5px; border-bottom: 1px solid #d9232d; padding-right: 0; }
+  #franja { position: absolute; left: 168px; top: 72px; width: 437px; height: 32px; background: #a5141b; border-radius: 16px 0 0 0; }
+  #franja .curva { position: absolute; left: 192px; top: 6px; width: 245px; height: 16px; background: #f97c7c; border-radius: 50% 0 0 50% / 100% 0 0 100%; }
+  #franja .ico { position: absolute; top: 6px; width: 18px; height: 18px; border-radius: 50%; background: #111; color: #fff; font-size: 11px; font-weight: bold; text-align: center; line-height: 18px; }
+  #codigo { position: absolute; left: 626px; top: 90px; font-size: 10px; font-weight: bold; }
+  #salir { position: absolute; left: 713px; top: 86px; width: 13px; height: 13px; background: #e8312f; border: 1px solid #a5141b; border-radius: 3px; color: #fff; font-size: 9px; line-height: 13px; text-align: center; cursor: pointer; }
+  #lateral { position: absolute; left: 0; top: 76px; width: 167px; height: calc(var(--h, 485px) - 106px); background: #e8e4e8; }
+  #lateral .item { position: absolute; right: 18px; font-size: 11px; font-weight: bold; color: #c01820; text-align: right; }
+  #lateral .barra { position: absolute; left: 0; top: 61px; width: 167px; height: 3px; background: #b3222a; }
+  #lateral .fila { position: absolute; left: 0; top: 64px; width: 167px; height: 17px; background: #ece8ec; }
+  #principal h2 { position: absolute; left: 167px; top: 119px; width: 598px; margin: 0; text-align: center; font-size: 17px; font-weight: bold; }
+  .modulo { position: absolute; width: 130px; text-align: center; font-size: 10px; font-weight: bold; line-height: 12px; cursor: pointer; color: #000; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 62px; }
+  .modulo .emoji { font-size: 30px; line-height: 36px; height: 36px; }
+  .modulo:hover span:last-child { text-decoration: underline; }
+  #pie { position: absolute; left: 0; top: calc(var(--h, 485px) - 30px); width: 765px; height: 30px; background: #eae4ea; font-size: 9px; line-height: 11px; }
+  #pie .izq { position: absolute; left: 100px; top: 4px; }
+  #pie .der { position: absolute; left: 566px; width: 145px; top: 4px; text-align: center; }
+  #aviso-modulo { position: absolute; left: 190px; top: 340px; width: 560px; text-align: center; font-size: 11px; color: #a3171d; }
+
+  #franja .ico, #lateral .item, #salir, #icon-home, #icon-close { cursor: pointer; }
+  #lateral .item:hover { text-decoration: underline; }
+  #contenido-modulo { position: absolute; left: 190px; top: 150px; width: 540px; font-size: 11px; line-height: 15px; }
+  #contenido-modulo p { margin: 0 0 14px; }
+  #contenido-modulo .btn { position: static; }
+  #modal-fondo { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 10; }
+  #modal-fondo.abierto { display: block; }
+  #modal { position: absolute; left: 100px; top: 40px; width: 413px; background: #fff; border: 2px solid #c9363e; outline: 1px solid #9a9a9a; }
+  #modal-titulo { background: #f7ead3; border-bottom: 2px solid #c9363e; margin: 0; font-size: 15px; text-align: center; line-height: 32px; }
+  #modal-cerrar { position: absolute; right: 8px; top: 9px; width: 14px; height: 14px; border-radius: 50%; background: #222; color: #fff; font-size: 11px; line-height: 13px; text-align: center; cursor: pointer; border: 1px solid #777; }
+  #modal-cuerpo { padding: 10px 16px 14px; font-size: 11px; line-height: 15px; }
+  #modal-cuerpo label { display: block; font-weight: bold; margin-top: 7px; }
+  #modal-cuerpo input { width: 200px; height: 15px; border: 1px solid #555; padding: 0 2px; font-size: 12px; border-radius: 2px; }
+  #modal-cuerpo ol { margin: 4px 0 0; padding-left: 18px; }
+  #modal-cuerpo .acciones { margin-top: 12px; }
+  #modal-cuerpo .btn { position: static; margin-right: 8px; }
+  #modal-msg { margin-top: 8px; color: #a3171d; font-weight: bold; min-height: 15px; }
+  #modal-msg.ok { color: #1a6b2a; }
+
+  #modal.chico { width: 270px; left: 250px; top: 150px; }
+  #modal.chico #modal-titulo { font-size: 14px; }
+  #tabla-notas { width: 545px; border-collapse: collapse; margin-bottom: 10px; }
+  #tabla-notas th { background: #a5141b; color: #fff; font-size: 10px; padding: 3px 5px; text-align: left; }
+  #tabla-notas td { font-size: 11px; padding: 3px 5px; border-bottom: 1px solid #d9c9cc; }
+  #tabla-notas tbody tr:nth-child(even) { background: #f6eef0; }
+  #tabla-notas .num { text-align: center; }
+  #tabla-notas .rep { color: #b3141b; font-weight: bold; }
+  #periodo { font-size: 11px; border: 1px solid #555; height: 19px; }
+  #promedios { font-weight: bold; }
+
+  #contenido-modulo.hist { left: 196px; top: 138px; width: 540px; }
+  .hist-titulo { font-size: 16px; font-weight: bold; color: #555; margin: 0 0 16px 24px; }
+  .hist-datos { position: relative; margin: 0 0 18px 17px; font-size: 12px; line-height: 15px; }
+  .hist-datos div { margin: 0; }
+  .hist-persona { position: absolute; left: -24px; top: 44px; font-size: 14px; }
+  .barra-hist { background: #d3d3d3; color: #2a2aa8; font-size: 10px; font-weight: bold; height: 14px; line-height: 14px; padding-left: 2px; width: 538px; box-sizing: border-box; margin-top: 6px; }
+  .radio-fila { display: block; height: 20px; line-height: 20px; font-size: 10px; margin-left: 4px; cursor: pointer; }
+  .radio-fila input { margin: 0 4px 0 0; vertical-align: middle; }
+  .radio-todos { color: #1a1ad0; font-weight: bold; font-size: 12px; }
+  .tabla-notas { width: 538px; border-collapse: collapse; margin: 4px 0 4px; }
+  .tabla-notas th { background: #a5141b; color: #fff; font-size: 10px; padding: 3px 5px; text-align: left; }
+  .tabla-notas td { font-size: 11px; padding: 3px 5px; border-bottom: 1px solid #d9c9cc; }
+  .tabla-notas tbody tr:nth-child(even) { background: #f6eef0; }
+  .tabla-notas .num { text-align: center; }
+  .tabla-notas .rep { color: #b3141b; font-weight: bold; }
+  .prom { font-weight: bold; margin: 4px 0 10px; font-size: 11px; }
+
+  .logo-univalle { background: url("data:image/png;base64,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") center / contain no-repeat; }
+  #logo { height: 58px; }
+  #cabecera .logo { height: 57px; }
+
+  /* ===== Carpeta de calificaciones (ventana de resultado + impresión) ===== */
+  #carpeta { position: relative; width: 640px; margin-left: 45px; padding: 4px 0 40px; font-family: Arial, Helvetica, sans-serif; color: #000; }
+  #carp-imprimir { position: absolute; left: 560px; top: 4px; width: 24px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; }
+  #carp-cerrar { display: block; margin-top: 20px; height: 21px; padding: 0 8px; background: #fff; border: 1px solid #3b4fd8; box-shadow: 1px 1px 0 #7d86d6; color: #14196b; font: bold 11px Arial, Helvetica, sans-serif; cursor: pointer; }
+  .carp-datos { position: relative; margin: 52px 0 0 44px; font-size: 14px; line-height: 15.5px; }
+  .carp-datos div { margin: 0; }
+  .carp-datos .hist-persona { position: absolute; left: -26px; top: 45px; }
+  .carp-periodo { margin-top: 14px; font-size: 14px; font-weight: bold; color: #3a3ac2; display: inline-block; background: #e2e2e2; padding: 2px 3px; }
+  .carp-nota { width: 615px; box-sizing: border-box; margin-top: 12px; background: #ffffcc; border: 1px solid #8a8a8a; padding: 2px 4px; font-size: 10px; line-height: 11px; }
+  .carp-total { width: 615px; box-sizing: border-box; margin: 6px 0 14px; background: #e2e2e2; text-align: right; padding: 5px 8px; font-size: 12px; color: #2a2ad0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .carp-total b { font-size: 16px; margin-left: 4px; }
+  #carpeta .carp-tabla, #carpeta .carp-resumen { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .carp-tabla { width: 615px; table-layout: fixed; border-collapse: collapse; margin-top: 4px; font-size: 11px; background: #fff; }
+  .carp-tabla th { font-weight: bold; text-align: left; padding: 3px 3px; vertical-align: bottom; background: #d4d4d4; line-height: 12px; }
+  .carp-tabla td { padding: 2px 3px; vertical-align: middle; line-height: 13.5px; }
+  .carp-tabla tr.fecha td { background: #d4d4d4; font-weight: bold; padding: 4px 3px; border-left: 1px solid #fff; }
+  .carp-tabla tr.fecha td.vacio { border-left: 0; }
+  .carp-tabla tbody tr.g td { background: #e2e2e2; border-left: 1px solid #fff; }
+  .carp-tabla tbody tr.g td:first-child { border-left: 0; }
+  .carp-tabla .c { text-align: center; }
+  .carp-resumen { width: 597px; table-layout: fixed; border-collapse: separate; border-spacing: 2px; font-size: 11px; margin: 8px 0 26px -2px; }
+  .carp-resumen td { padding: 3px 4px; font-weight: bold; vertical-align: middle; background: #d4d4d4; }
+  .carp-resumen .tit { text-align: center; background: #c9c9c9; }
+  .carp-resumen .val { text-align: right; background: #e2e2e2; }
+  .carp-resumen td.big { font-size: 18px; text-align: center; background: #e8e8e8; }
+  @media print { #modal-fondo { display: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ================= VISTA: LOGIN ================= -->
+<div id="vista-login" class="vista activa">
+  <div id="login-box">
+    <div id="login-header">
+      <span id="icon-key" aria-hidden="true">🗝️</span>
+      <h1>Ingresar al sistema</h1>
+      <svg id="icon-home" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 L1 8 H3 V15 H13 V8 H15 Z" fill="#6aa7d8" stroke="#2f6a9e"/><rect x="6.5" y="10" width="3" height="5" fill="#f3c34a"/></svg>
+      <div id="icon-close" aria-hidden="true">×</div>
+    </div>
+    <div id="logo" class="logo-univalle" role="img" aria-label="Universidad del Valle"></div>
+    <div id="aviso">Si usted es <b>ESTUDIANTE</b>, recuerde imprimir su tabulado cada vez que realice procesos de <b>adición/cancelación de asignaturas</b>. Este documento podría ser de utilidad para cualquier reclamación.</div>
+    <form id="form-login" autocomplete="off" novalidate>
+      <label class="lbl" id="lbl-login" for="login">Login :</label>
+      <input class="campo" id="login" type="text" maxlength="30">
+      <label class="lbl" id="lbl-pass" for="password">Contraseña :</label>
+      <input class="campo" id="password" type="password" maxlength="30">
+      <button class="btn" id="btn-ingresar" type="submit">Ingresar al Sistema</button>
+      <button class="btn" id="btn-limpiar" type="button">Limpiar</button>
+    </form>
+    <a id="guia" href="#"><svg width="17" height="17" viewBox="0 0 17 17"><circle cx="8.5" cy="8.5" r="8" fill="#e8312f"/><path d="M4 8.5 H12 M9 5 L12.5 8.5 L9 12" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Ver Guía</a>
+    <a class="enlace" id="cambiar" href="#">Cambiar Contraseña</a>
+    <a class="enlace" id="olvide" href="#">Olvidé mi contraseña</a>
+    <div id="mensaje" role="alert"></div>
+  </div>
+</div>
+
+<!-- ================= VISTA: PANEL DE CONTROL ================= -->
+<div id="vista-panel" class="vista">
+  <div id="app">
+    <div id="cabecera">
+      <div class="logo logo-univalle" role="img" aria-label="Universidad del Valle"></div>
+      <h1 id="titulo-sistema">Sistema de Registro Académico y Admisiones, Tulua</h1>
+    </div>
+
+    <div id="lateral">
+      <div class="barra"></div>
+      <div class="fila"></div>
+      <div class="item" id="mi-panel" style="top:70px">Panel de Control</div>
+      <div class="item" id="mi-panel2" style="top:87px">Panel de control ▸</div>
+      <div class="item" id="mi-modulo" style="top:104px; display:none"></div>
+    </div>
+
+    <div id="franja">
+      <span class="ico" id="ico-ayuda" role="button" tabindex="0" title="Ayuda" style="left:39px">?</span>
+      <span class="ico" id="ico-usuario" role="button" tabindex="0" title="Datos de la sesión" style="left:66px">☻</span>
+      <span class="ico" id="ico-inicio" role="button" tabindex="0" title="Panel de control" style="left:93px">✈</span>
+      <span class="ico" id="ico-info" role="button" tabindex="0" title="Acerca del sistema" style="left:120px">i</span>
+      <span class="ico" id="ico-salir" role="button" tabindex="0" title="Cerrar sesión" style="left:147px">☝</span>
+      <span class="curva"></span>
+    </div>
+    <div id="codigo"></div>
+    <div id="salir" role="button" title="Salir" aria-label="Salir">⏻</div>
+
+    <div id="principal">
+      <h2 id="titulo-panel">Panel de Control</h2>
+      <div id="modulos"></div>
+      <div id="contenido-modulo"></div>
+      <div id="aviso-modulo" role="status"></div>
+    </div>
+
+    <div id="pie">
+      <div class="izq">Copyright © 2003-2011<br>Universidad del Valle</div>
+      <div class="der">Desarrollado por<br>Net-Centric y OITEL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= VISTA: CARPETA (ventana de resultado) ================= -->
+<div id="vista-carpeta" class="vista"><div id="carpeta"></div></div>
+
+<div id="modal-fondo"><div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo"><h2 id="modal-titulo"></h2><div id="modal-cerrar" role="button" aria-label="Cerrar">×</div><div id="modal-cuerpo"></div></div></div>
+
+<script>
+  // ---- Usuario de prueba (solo para la demo; en un sistema real esto va en el servidor) ----
+  const USUARIO = { login: '2380661-3743', password: 'Santi*26', codigo: '202380661-3743' };
+  try { USUARIO.password = localStorage.getItem('sira_clave') || USUARIO.password; } catch (e) {}
+
+  const MODULOS = [
+    { id: 'calificaciones', corto: 'Calificaciones',    icono: '👥', texto: 'Consultar Calificaciones del Estudiante', x: 264, y: 178 },
+    { id: 'contacto',       corto: 'Contacto',          icono: '📇', texto: 'Información de contacto',                 x: 399, y: 178 },
+    { id: 'resolucion',     corto: 'Resolución',        icono: '✍️', texto: 'Consultar Resolución',                    x: 533, y: 178 },
+    { id: 'tabulado',       corto: 'Tabulado',          icono: '🕒', texto: 'Consultar Tabulado',                      x: 668, y: 178 },
+    { id: 'grado',          corto: 'Candidato a grado', icono: '🎓', texto: 'Registrar solicitud candidato a grado',   x: 264, y: 259 },
+    { id: 'reingreso',      corto: 'Reingreso',         icono: '📋', texto: 'Proceso de Reingreso o Traslado',         x: 399, y: 259 },
+    { id: 'cancelacion',    corto: 'Cancelación',       icono: '📝', texto: 'Registrar solicitud cancelación de Matrícula Académica', x: 533, y: 259 },
+    { id: 'cupo',           corto: 'Cupo otra sede',    icono: '🖌️', texto: 'Realizar Solicitud de Cupo En Otra Sede', x: 668, y: 259 }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const mostrar = (n) => {
+    document.querySelectorAll('.vista').forEach(v => v.classList.remove('activa'));
+    $('vista-' + n).classList.add('activa');
+  };
+
+
+  // Enlaza un formulario sin depender de 'submit' (en vistas previas con sandbox el envío está bloqueado)
+  function enlazar(form, fn) {
+    form.addEventListener('submit', (e) => { e.preventDefault(); fn(); });
+    const b = form.querySelector('button[type=submit]');
+    if (b) b.addEventListener('click', (e) => { e.preventDefault(); fn(); });
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); fn(); }
+    });
+  }
+
+  // ================= MODAL =================
+  let alCerrarModal = null;
+  function abrirModal(titulo, html, chico) {
+    alCerrarModal = null;
+    $('modal').classList.toggle('chico', !!chico);
+    $('modal-titulo').textContent = titulo;
+    $('modal-cuerpo').innerHTML = html;
+    $('modal-fondo').classList.add('abierto');
+    const primero = $('modal-cuerpo').querySelector('input');
+    if (primero) primero.focus();
+  }
+  function cerrarModal() {
+    $('modal-fondo').classList.remove('abierto');
+    if (alCerrarModal) { const f = alCerrarModal; alCerrarModal = null; f(); }
+  }
+  function msgModal(texto, ok) { const m = $('modal-msg'); m.textContent = texto; m.className = ok ? 'ok' : ''; }
+  $('modal-cerrar').addEventListener('click', cerrarModal);
+  $('modal-fondo').addEventListener('click', (e) => { if (e.target.id === 'modal-fondo') cerrarModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModal(); });
+
+  function modalGuia() {
+    abrirModal('Guía de ingreso',
+      '<ol><li>Escriba su <b>login</b> (código de estudiante) y su <b>contraseña</b>.</li>' +
+      '<li>Pulse <b>Ingresar al Sistema</b> para entrar al Panel de Control.</li>' +
+      '<li>Use <b>Limpiar</b> para borrar los campos.</li>' +
+      '<li>Si olvidó su clave, use <b>Olvidé mi contraseña</b>; para cambiarla, <b>Cambiar Contraseña</b>.</li>' +
+      '<li>Al terminar, cierre sesión con el botón de salida del Panel de Control.</li></ol>' +
+      '<div class="acciones"><button class="btn" type="button" id="g-ok">Cerrar</button></div>');
+    $('g-ok').addEventListener('click', cerrarModal);
+  }
+
+  function modalCambiar() {
+    abrirModal('Cambiar Contraseña',
+      '<form id="f-cambiar" autocomplete="off" novalidate>' +
+      '<label for="c-login">Login:</label><input id="c-login" type="text">' +
+      '<label for="c-actual">Contraseña actual:</label><input id="c-actual" type="password">' +
+      '<label for="c-nueva">Nueva contraseña (mínimo 6 caracteres):</label><input id="c-nueva" type="password">' +
+      '<label for="c-conf">Confirmar nueva contraseña:</label><input id="c-conf" type="password">' +
+      '<div class="acciones"><button class="btn" type="submit">Cambiar</button>' +
+      '<button class="btn" type="button" id="c-cancel">Cancelar</button></div>' +
+      '<div id="modal-msg" role="alert"></div></form>');
+    $('c-cancel').addEventListener('click', cerrarModal);
+    enlazar($('f-cambiar'), () => {
+      const l = $('c-login').value.trim(), a = $('c-actual').value, n = $('c-nueva').value, c = $('c-conf').value;
+      if (!l || !a || !n || !c) return msgModal('Complete todos los campos.');
+      if (l !== USUARIO.login || a !== USUARIO.password) return msgModal('Login o contraseña actual incorrectos.');
+      if (n.length < 6) return msgModal('La nueva contraseña debe tener al menos 6 caracteres.');
+      if (n === a) return msgModal('La nueva contraseña debe ser diferente a la actual.');
+      if (n !== c) return msgModal('La confirmación no coincide.');
+      USUARIO.password = n;
+      try { localStorage.setItem('sira_clave', n); } catch (err) {}
+      msgModal('Contraseña cambiada correctamente.', true);
+      setTimeout(cerrarModal, 1500);
+    });
+  }
+
+  function modalOlvide() {
+    abrirModal('Olvidé mi contraseña',
+      '<form id="f-olvide" autocomplete="off" novalidate>' +
+      '<label for="o-login">Login:</label><input id="o-login" type="text">' +
+      '<label for="o-correo">Correo electrónico:</label><input id="o-correo" type="text">' +
+      '<div class="acciones"><button class="btn" type="submit">Enviar</button>' +
+      '<button class="btn" type="button" id="o-cancel">Cancelar</button></div>' +
+      '<div id="modal-msg" role="alert"></div></form>');
+    $('o-cancel').addEventListener('click', cerrarModal);
+    enlazar($('f-olvide'), () => {
+      const l = $('o-login').value.trim(), c = $('o-correo').value.trim();
+      if (!l || !c) return msgModal('Ingrese su login y su correo electrónico.');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c)) return msgModal('Ingrese un correo electrónico válido.');
+      msgModal('Si los datos coinciden, recibirá instrucciones en su correo (envío simulado).', true);
+    });
+  }
+
+  function sesionIniciada() {
+    const pasarAlPanel = () => { $('codigo').textContent = USUARIO.codigo; irPanel(); mostrar('panel'); };
+    abrirModal('Aviso',
+      '<p style="text-align:center;margin:10px 0;font-weight:bold;color:#1a6b2a">✓ Sesión iniciada correctamente.</p>' +
+      '<div class="acciones" style="text-align:center"><button class="btn" type="button" id="si-ok">Aceptar</button></div>', true);
+    alCerrarModal = pasarAlPanel;
+    $('si-ok').addEventListener('click', cerrarModal);
+    $('si-ok').focus();
+    setTimeout(() => { if (alCerrarModal === pasarAlPanel) cerrarModal(); }, 1500);
+  }
+
+  // ================= LOGIN =================
+  const login = $('login'), pass = $('password'), msg = $('mensaje');
+  let intentos = 0;
+  login.focus();
+
+  enlazar($('form-login'), () => {
+    if ($('btn-ingresar').disabled || $('modal-fondo').classList.contains('abierto')) return;
+    if (!login.value.trim() || !pass.value) {
+      msg.textContent = 'Debe ingresar su login y contraseña.';
+      (login.value.trim() ? pass : login).focus();
+      return;
+    }
+    if (login.value.trim() !== USUARIO.login || pass.value !== USUARIO.password) {
+      intentos++;
+      pass.value = '';
+      if (intentos >= 3) {
+        msg.textContent = 'Demasiados intentos. Espere 10 segundos.';
+        $('btn-ingresar').disabled = true;
+        setTimeout(() => { $('btn-ingresar').disabled = false; intentos = 0; msg.textContent = ''; pass.focus(); }, 10000);
+      } else {
+        msg.textContent = 'Login o contraseña incorrectos.';
+        pass.focus();
+      }
+      return;
+    }
+    intentos = 0;
+    msg.textContent = '';
+    sesionIniciada();
+  });
+
+  $('btn-limpiar').addEventListener('click', () => { $('form-login').reset(); msg.textContent = ''; login.focus(); });
+  $('icon-close').addEventListener('click', () => { $('form-login').reset(); msg.textContent = ''; login.focus(); });
+  $('icon-home').addEventListener('click', () => window.location.reload());
+  $('guia').addEventListener('click', (e) => { e.preventDefault(); modalGuia(); });
+  $('cambiar').addEventListener('click', (e) => { e.preventDefault(); modalCambiar(); });
+  $('olvide').addEventListener('click', (e) => { e.preventDefault(); modalOlvide(); });
+
+  // ================= PANEL DE CONTROL =================
+  function irPanel() {
+    $('titulo-panel').textContent = 'Panel de Control';
+    $('titulo-panel').style.display = '';
+    $('modulos').style.display = '';
+    $('contenido-modulo').className = '';
+    $('contenido-modulo').innerHTML = '';
+    $('mi-modulo').style.display = 'none';
+    $('app').style.setProperty('--h', '485px');
+  }
+
+  // ---- Datos del estudiante (editar aquí) ----
+  const ESTUDIANTE = {
+    codigo: '202380661', nombre: 'CRIOLLO ORDOÑEZ SANTIAGO ALEXANDER', documento: 'C.C. 1080046141',
+    programa: '3743-06-DIU-INGENIERÍA DE SISTEMAS', email: 'santiago.criollo@correounivalle.edu.co',
+    ingreso: 'ADMISION', resolucion: '(698) 047 de 2020', curriculo: 'RF -&gt; REFORMA CURRICULAR'
+  };
+
+  const ICONO_PERSONA = '<svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true"><circle cx="9" cy="5" r="4.2" fill="#e7b100" stroke="#8a6200" stroke-width=".8"/><path d="M1.5 19c0-5 3-7.5 7.5-7.5s7.5 2.5 7.5 7.5z" fill="#e7b100" stroke="#8a6200" stroke-width=".8"/></svg>';
+  const ICONO_IMPRESORA = '<svg width="22" height="20" viewBox="0 0 22 20" aria-hidden="true"><rect x="6" y="1" width="10" height="6" fill="#fff" stroke="#7d8790"/><rect x="1.5" y="6.5" width="19" height="8" rx="1.5" fill="#b9c1c8" stroke="#6f7a84"/><rect x="5" y="12" width="12" height="6.5" fill="#fff" stroke="#7d8790"/><circle cx="17.5" cy="9" r="1" fill="#4aa3e0"/></svg>';
+  const TITULO_BASE = document.title;
+  const TITULO_CARPETA = 'Sistema de Registro Académico y Admisiones >> -';
+  const NOTA_MINIMA = 3.0;
+
+  const PERIODOS = [
+    { id: '2023-2', texto: 'AGOSTO/2023 - DICIEMBRE/2023',   fecha: '2023-08-14' },
+    { id: '2024-1', texto: 'FEBRERO/2024 - JUNIO/2024',      fecha: '2024-02-05' },
+    { id: '2024-2', texto: 'AGOSTO/2024 - DICIEMBRE/2024',   fecha: '2024-08-12' },
+    { id: '2025-1', texto: 'FEBRERO/2025 - JUNIO/2025',      fecha: '2025-02-10' },
+    { id: '2025-2', texto: 'AGOSTO/2025 - DICIEMBRE/2025',   fecha: '2025-08-11' },
+    { id: '2026-1', texto: 'FEBRERO/2026 - JUNIO/2026',      fecha: '2026-02-09' },
+    { id: '2026-2', texto: 'AGOSTO/2026 - DICIEMBRE/2026',   fecha: '2026-08-13' }
+  ];
+
+  // Fila: código, asignatura, créditos, nota (null = en curso), FUN (AB/AP/EC), COM y opciones {gr, sde, tm, react, calTxt}
+  const R = (cod, nombre, crd, nota, fun, com, o) => Object.assign(
+    { cod: cod, nombre: nombre, crd: crd, nota: nota, fun: fun, com: com, gr: '50', sde: '06', tm: 'N' }, o || {});
+
+  // S1 = captura real del SIRA. S2–S6 = materias de la malla con notas de ejemplo (todas aprobadas). S7 = matrícula actual, sin notas.
+  const MALLA = {
+    '2023-2': [ // Semestre 1 (real)
+      R('111023C','MATEMÁTICAS BÁSICAS',3,3.0,'AB','CTE'),
+      R('204001M','ESPAÑOL',0,null,'','',{ gr: '00', tm: 'EX', calTxt: 'E.X' }),
+      R('204025C','INGLÉS CON FINES GENERALES Y ACADÉM. I',2,4.7,'AB','LCO',{ gr: '54' }),
+      R('404002C','DEPORTE Y SALUD',2,4.1,'EC','SIN',{ gr: '51' }),
+      R('701001C','INSERCIÓN A LA VIDA UNIVERSITARIA',2,3.5,'AB','EVS',{ gr: '52' }),
+      R('701002C','TALLER DE INGENIERÍA I',3,3.0,'AB','CTE',{ gr: '52' }),
+      R('701003C','INTRODUCCIÓN A LA INGENIERÍA',2,4.6,'AB','LCO'),
+      R('750012C','FUNDAMENTOS DE PROGRAMACIÓN IMPERATIVA',3,3.7,'AB','CTE',{ gr: '51' })
+    ],
+    '2024-1': [ // Semestre 2 -> promedio 3.22
+      R('111021C','CÁLCULO MONOVARIABLE',3,3.0,'AB','CTE'),
+      R('111038C','ÁLGEBRA LINEAL',3,3.1,'AB','CTE'),
+      R('750015C','FUNDAMENTOS DE PROGRAMACIÓN OO',3,3.2,'AP','CTE'),
+      R('750004C','MATEMÁTICAS DISCRETAS I',4,3.0,'AB','CTE'),
+      R('204133C','COMPRENSIÓN Y PRODUCCIÓN DE TEXTOS ACADÉMICOS GENERALES',2,3.0,'AB','LCO'),
+      R('405126M','HERRAMIENTAS PARA HABLAR EN PÚBLICO',3,4.0,'EC','SIN',{ gr: '51' })
+    ],
+    '2024-2': [ // Semestre 3
+      R('111022C','CÁLCULO MULTIVARIABLE',3,3.5,'AB','CTE'),
+      R('106012C','FÍSICA I + LABORATORIO',4,3.7,'AB','CTE'),
+      R('750014C','FUNDAMENTOS DE PROGRAMACIÓN ORIENTADA A EVENTOS',3,4.2,'AP','CTE'),
+      R('750005C','MATEMÁTICAS DISCRETAS II',4,3.6,'AB','CTE'),
+      R('730011C','FUNDAMENTOS DE SISTEMAS SOCIOECOLÓGICOS',3,4.4,'EC','SIN')
+    ],
+    '2025-1': [ // Semestre 4
+      R('761001C','PROBABILIDAD Y ESTADÍSTICA',3,3.7,'AB','CTE'),
+      R('111026C','ECUACIONES DIFERENCIALES',3,3.4,'AB','CTE'),
+      R('750013C','FUNDAMENTOS DE PROGRAMACIÓN FUNCIONAL Y CONCURRENTE',3,4.2,'AP','CTE'),
+      R('750001C','SISTEMAS OPERATIVOS',4,3.7,'AP','CTE'),
+      R('750006C','BASES DE DATOS',4,4.0,'AP','CTE')
+    ],
+    '2025-2': [ // Semestre 5
+      R('750016C','SIMULACIÓN Y COMPUTACIÓN NUMÉRICA',3,3.6,'AB','CTE'),
+      R('750009C','DESARROLLO DE SOFTWARE I',3,4.1,'AP','CTE'),
+      R('750017C','FUNDAM.INTERPRETACIÓN Y COMPILACIÓN LP',3,3.7,'AP','CTE'),
+      R('750008C','ANÁLISIS Y DISEÑO DE ALGORITMOS I',3,3.5,'AP','CTE'),
+      R('750010C','FUNDAMENTOS DE REDES',3,3.9,'AP','CTE'),
+      R('760016C','INGENIERÍA ECONÓMICA',3,4.4,'AB','CTE')
+    ],
+    '2026-1': [ // Semestre 6 -> promedio 3.12
+      R('750021C','DESARROLLO DE SOFTWARE II',3,3.5,'AP','CTE'),
+      R('750018C','PROYECTO INTEGRADOR I',4,3.0,'AP','CTE'),
+      R('750020C','ANÁLISIS Y DISEÑO DE ALGORITMOS II',3,3.1,'AP','CTE'),
+      R('750023C','INFRAESTRUCTURAS PARALELAS Y DISTRIBUIDAS',3,3.1,'AP','CTE'),
+      R('750022C','INTELIGENCIA ARTIFICIAL',4,3.0,'AP','CTE')
+    ],
+    '2026-2': [ // Semestre 7 (en curso, sin notas)
+      R('730026C','SEM.CONSTITUCIÓN, LEGISLACIÓN Y ÉTICA',2,null,'AB','EVS'),
+      R('750027C','DESARROLLO DE SOFTWARE III',3,null,'AP','CTE'),
+      R('750026C','DESARROLLO DE APLICACIONES PARA DISPOSITIVOS MÓVILES',3,null,'AP','CTE'),
+      R('750024C','CIBERSEGURIDAD',3,null,'AP','CTE'),
+      R('750025C','INTRODUCCIÓN A LA CIENCIA DE DATOS',3,null,'AP','CTE')
+    ]
+  };
+
+  function resumen(id) {
+    let acumCred = 0, acumAprob = 0, res = null;
+    for (let k = 0; k < PERIODOS.length && !res; k++) {
+      const filas = MALLA[PERIODOS[k].id];
+      const mat = filas.reduce((a, r) => a + r.crd, 0);
+      const apr = filas.reduce((a, r) => a + (r.nota !== null && r.nota >= NOTA_MINIMA ? r.crd : 0), 0);
+      acumCred += mat; acumAprob += apr;
+      if (PERIODOS[k].id === id) {
+        const cal = filas.filter(r => r.nota !== null);
+        const cc = cal.reduce((a, r) => a + r.crd, 0);
+        res = { mat: mat, apr: apr, pct: mat ? Math.round(apr / mat * 100) : 0, enCurso: cal.length === 0,
+                acumCred: acumCred, acumAprob: acumAprob,
+                prom: cc ? cal.reduce((a, r) => a + r.crd * r.nota, 0) / cc : null };
+      }
+    }
+    return res;
+  }
+
+  function ajustarAltura() {
+    const c = $('contenido-modulo');
+    $('app').style.setProperty('--h', Math.max(485, c.offsetTop + c.offsetHeight + 60) + 'px');
+  }
+
+  function datosHTML(clase) {
+    const e = ESTUDIANTE;
+    return '<div class="' + clase + '"><span class="hist-persona" aria-hidden="true">' + ICONO_PERSONA + '</span>' +
+      '<div>Estudiante : <b>' + e.codigo + ' -- ' + e.nombre + '</b></div>' +
+      '<div>Documento: <b>' + e.documento + '</b></div>' +
+      '<div>Programa Académico : <b>' + e.programa + '</b></div>' +
+      '<div>Email Institucional: <b>' + e.email + '</b></div>' +
+      '<div>Tipo de Ingreso: <b>' + e.ingreso + '</b></div>' +
+      '<div>Resolución del estudiante: <b>' + e.resolucion + '</b></div>' +
+      '<div>Tipo de Currículo: <b>' + e.curriculo + '</b></div></div>';
+  }
+
+  // Pantalla "Historial Calificación Estudiante": escoger periodo
+  function abrirHistorial() {
+    $('titulo-panel').style.display = 'none';
+    $('modulos').style.display = 'none';
+    $('mi-modulo').style.display = 'none';
+    const c = $('contenido-modulo');
+    c.className = 'hist';
+    c.innerHTML =
+      '<div class="hist-titulo">🔧 Historial Calificación Estudiante</div>' + datosHTML('hist-datos') +
+      '<div class="barra-hist">Escoja el Periodo Académico:</div>' +
+      '<label class="radio-fila radio-todos"><input type="radio" name="periodo" value="todos"> * TODOS</label>' +
+      PERIODOS.map((p, k) => '<label class="radio-fila"><input type="radio" name="periodo" value="' + p.id + '"' +
+        (k === PERIODOS.length - 1 ? ' checked' : '') + '> ' + p.texto + '</label>').join('') +
+      '<button class="btn" type="button" id="generar">Generar Carpeta</button>';
+    $('generar').addEventListener('click', () => {
+      const sel = c.querySelector('input[name=periodo]:checked');
+      abrirCarpeta(sel ? sel.value : '2026-2');
+    });
+    ajustarAltura();
+  }
+
+  const fmtProm = (v) => v === null ? '' : String(parseFloat(v.toFixed(2)));
+
+  // Bloque de un periodo dentro de la carpeta (tabla + resumen de finalización)
+  function totalHTML() {
+    let cr = 0, pt = 0;
+    PERIODOS.forEach(p => MALLA[p.id].forEach(r => { if (r.nota !== null) { cr += r.crd; pt += r.crd * r.nota; } }));
+    return '<div class="carp-nota"><b>NOTA:</b><br><b>(1)</b> La impresión de este documento no tiene ninguna validez de tipo legal y no se tendrá en cuenta en futuras reclamaciones.<br>' +
+      '<b>(2)</b> Los certificados oficiales son elaborados por la Oficina de Registro Académico y Admisiones.<br>' +
+      '<b>(3)</b> Los promedios se calculan únicamente con la información registrada actualmente en el sistema.</div>' +
+      '<div class="carp-total">Promedio Total Acumulado del estudiante: <b>' + (cr ? (pt / cr).toFixed(2) : '') + '</b></div>';
+  }
+
+  function periodoHTML(id) {
+    const per = PERIODOS.filter(p => p.id === id)[0];
+    const filas = MALLA[id].slice().sort((a, b) => a.cod < b.cod ? -1 : (a.cod > b.cod ? 1 : 0));
+    const r = resumen(id);
+    const celdas = filas.map((f, i) =>
+      '<tr' + (i % 2 === 0 ? ' class="g"' : '') + '><td>' + f.cod + '</td><td>' + f.gr + '</td><td>' + f.sde + '</td><td>' + f.nombre +
+      '</td><td>' + f.tm + '</td><td>' + f.fun + '</td><td>' + f.com + '</td><td>' + f.crd + '</td><td>' +
+      (f.calTxt || (f.nota === null ? '' : f.nota.toFixed(1))) + '</td><td></td><td class="c">' + (f.react || '') + '</td></tr>').join('');
+    return '<div class="carp-periodo">PERIODO: ' + per.texto + '</div>' +
+      '<table class="carp-tabla"><colgroup><col style="width:57px"><col style="width:26px"><col style="width:34px"><col style="width:226px"><col style="width:26px"><col style="width:30px"><col style="width:30px"><col style="width:30px"><col style="width:25px"><col style="width:31px"><col style="width:100px"></colgroup>' +
+      '<thead><tr class="fecha"><td colspan="4" class="vacio"></td><td colspan="7">Fecha Matricula: ' + per.fecha + '</td></tr>' +
+      '<tr><th>CÓDIGO</th><th>GR</th><th>SDE</th><th>ASIGNATURA</th><th>TM</th><th>FUN</th><th>COM</th><th>CRD</th><th>CAL</th><th>HAB</th><th class="c">CANCELACIÓN/<br>REACTIVACIÓN</th></tr></thead><tbody>' + celdas + '</tbody></table>' +
+      '<table class="carp-resumen"><colgroup><col style="width:124px"><col style="width:71px"><col style="width:140px"><col style="width:58px"><col style="width:135px"><col style="width:65px"></colgroup>' +
+      '<tr><td class="tit" colspan="6">Resumen de Finalización por periodo</td></tr>' +
+      '<tr><td>Créditos Matriculados:</td><td class="val">' + r.mat + '</td><td>Núm. Créd. Aprobados :</td><td class="val">' + r.apr + '</td><td>% Créd. Aprobados :</td><td class="val">' + r.pct + '%</td></tr>' +
+      '<tr><td>Créditos Acumulados:</td><td class="val">' + (r.enCurso ? '' : r.acumCred) + '</td><td>Num. Créd. Aprobados Acumulados:</td><td class="val">' + (r.enCurso ? '' : r.acumAprob) + '</td><td>Promedio Semestral :</td><td class="big">' + fmtProm(r.prom) + '</td></tr></table>';
+  }
+
+  // "Generar Carpeta": abre la ventana de resultado (como el popup del SIRA)
+  function abrirCarpeta(valor) {
+    const ids = valor === 'todos' ? PERIODOS.map(p => p.id) : [valor];
+    $('carpeta').innerHTML =
+      '<button id="carp-imprimir" type="button" title="Imprimir" aria-label="Imprimir">' + ICONO_IMPRESORA + '</button>' +
+      '<button id="carp-cerrar" type="button">Cerrar</button>' +
+      datosHTML('carp-datos') + (valor === 'todos' ? totalHTML() : '') + ids.map(periodoHTML).join('');
+    $('carp-imprimir').addEventListener('click', () => { try { window.print(); } catch (e) {} });
+    $('carp-cerrar').addEventListener('click', cerrarCarpeta);
+    document.title = TITULO_CARPETA;
+    mostrar('carpeta');
+    window.scrollTo(0, 0);
+  }
+
+  function cerrarCarpeta() {
+    document.title = TITULO_BASE;
+    mostrar('panel');
+    window.scrollTo(0, 0);
+  }
+
+  function abrirModulo(m) {
+    // Solo "Calificaciones" está disponible por ahora
+    if (m.id !== 'calificaciones') {
+      abrirModal('Aviso',
+        '<p style="text-align:center;margin:10px 0">No disponible por el momento.</p>' +
+        '<div class="acciones" style="text-align:center"><button class="btn" type="button" id="nd-ok">Aceptar</button></div>', true);
+      $('nd-ok').addEventListener('click', cerrarModal);
+      return;
+    }
+    abrirHistorial();
+  }
+
+  MODULOS.forEach(m => {
+    const a = document.createElement('a');
+    a.className = 'modulo';
+    a.href = '#' + m.id;
+    a.style.left = (m.x - 65) + 'px';
+    a.style.top = (m.y - 30) + 'px';
+    a.innerHTML = '<span class="emoji" aria-hidden="true">' + m.icono + '</span><span>' + m.texto + '</span>';
+    a.addEventListener('click', (e) => { e.preventDefault(); abrirModulo(m); });
+    $('modulos').appendChild(a);
+  });
+
+  function cerrarSesion() {
+    $('form-login').reset();
+    msg.textContent = '';
+    irPanel();
+    mostrar('login');
+    login.focus();
+  }
+
+  const activar = (id, fn) => {
+    const el = $(id);
+    el.addEventListener('click', fn);
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
+  };
+  activar('salir', cerrarSesion);
+  activar('ico-salir', cerrarSesion);
+  activar('ico-inicio', irPanel);
+  activar('mi-panel', irPanel);
+  activar('mi-panel2', irPanel);
+  activar('ico-ayuda', () => {
+    abrirModal('Ayuda',
+      '<p>Desde el <b>Panel de Control</b> elija la opción que desea consultar o solicitar.</p>' +
+      '<p>Use el menú lateral o el ícono del avión para volver al panel, y el último ícono para cerrar sesión.</p>' +
+      '<div class="acciones"><button class="btn" type="button" id="a-ok">Cerrar</button></div>');
+    $('a-ok').addEventListener('click', cerrarModal);
+  });
+  activar('ico-usuario', () => {
+    abrirModal('Datos de la sesión',
+      '<p>Login: <b>' + USUARIO.login + '</b></p><p>Código: <b>' + USUARIO.codigo + '</b></p>' +
+      '<div class="acciones"><button class="btn" type="button" id="u-ok">Cerrar</button></div>');
+    $('u-ok').addEventListener('click', cerrarModal);
+  });
+  activar('ico-info', () => {
+    abrirModal('Acerca del sistema',
+      '<p>Sistema de Registro Académico y Admisiones, Tulua.<br>Réplica académica con fines educativos.</p>' +
+      '<div class="acciones"><button class="btn" type="button" id="i-ok">Cerrar</button></div>');
+    $('i-ok').addEventListener('click', cerrarModal);
+  });
+</script>
+</body>
+</html>
